@@ -8,9 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController // request, response
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
@@ -28,7 +29,8 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<PostDto>> searchAll(@PageableDefault(size = 10, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable) {
+    // @PageableDefault에서 주는건 딱 size만큼만 가져오는게 아니라 페이징단위를 size만큼, sort, direction정렬 단위로 가져오는 것
+    public ResponseEntity<Page<PostDto>> searchAll(@PageableDefault(size = 100, sort = "createDate",  direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(postService.searchAllPost(pageable));
     }
 
@@ -42,4 +44,8 @@ public class PostController {
         postService.deletePost(postId);
     }
 
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<Page<PostDto>> searchPartPost(@PageableDefault(size = 100, sort = "createDate",  direction = Sort.Direction.DESC) Pageable pageable, @PathVariable String keyword){
+        return ResponseEntity.ok(postService.searchPartPost(keyword, pageable));
+    }
 }
