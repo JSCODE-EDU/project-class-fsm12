@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService{
     public Long updatePost(PostDto postDto, Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
-            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당하는 게시글이 존재하지 않습니다.");
+            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당 게시물은 존재하지 않습니다.");
         }
         Post post = optionalPost.get();
         post.update(postDto.getTitle(), postDto.getContent());
@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService{
     public String deletePost(Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
-            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당하는 게시글이 존재하지 않습니다.");
+            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당 게시물은 게시글이 존재하지 않습니다.");
         }
         Post post = optionalPost.get();
         postRepository.delete(post);
