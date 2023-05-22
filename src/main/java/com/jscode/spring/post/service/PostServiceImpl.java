@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor // 생성자 주입
@@ -49,7 +50,7 @@ public class PostServiceImpl implements PostService{
     public Long updatePost(PostDto postDto, Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
-            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당하는 게시글이 존재하지 않습니다.");
+            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당 게시물은 존재하지 않습니다.");
         }
         Post post = optionalPost.get();
         post.update(postDto.getTitle(), postDto.getContent());
@@ -57,12 +58,20 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void deletePost(Long postId) {
+    public String deletePost(Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
-            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당하는 게시글이 존재하지 않습니다.");
+            throw new PostNotFoundException(ErrorCode.POST_NOT_FOUND_ERROR, "해당 게시물은 게시글이 존재하지 않습니다.");
         }
         Post post = optionalPost.get();
         postRepository.delete(post);
+        return "deleted";
     }
+
+    @Override
+    public Page<PostDto> searchPartPost(String keyword, Pageable pageable) {
+        Page<Post> postPage = postRepository.findByTitleContaining(pageable, keyword);
+        return postPage.map(PostDto::toDto);
+    }
+
 }
